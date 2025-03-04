@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, render_template, request, jsonify
 import joblib
 import numpy as np
 
@@ -12,21 +12,28 @@ models = {
     "lung_disease": joblib.load("models/lung_disease_model.pkl"),
 }
 
-# Define API endpoint
+@app.route("/")
+def home():
+    return render_template("index.html")
+
 @app.route("/predict", methods=["POST"])
 def predict():
-    data = request.json
-    disease = data.get("disease")  # Type of disease to predict
-    features = data.get("features")  # List of feature values
-    
-    if disease not in models:
-        return jsonify({"error": "Invalid disease type"}), 400
-    
-    model = models[disease]
-    prediction = model.predict([np.array(features)])
-    
-    result = "Positive" if prediction[0] == 1 else "Negative"
-    return jsonify({"disease": disease, "prediction": result})
+    try:
+        data = request.json
+        disease = data.get("disease")
+        features = data.get("features")
+
+        if disease not in models:
+            return jsonify({"error": "Invalid disease type"}), 400
+
+        model = models[disease]
+        prediction = model.predict([np.array(features)])
+
+        result = "Positive" if prediction[0] == 1 else "Negative"
+        return jsonify({"disease": disease, "prediction": result})
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
     app.run(debug=True)
