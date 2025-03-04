@@ -1,4 +1,4 @@
-Flask
+streamlit
 numpy
 joblib
 scikit-learn
