@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
     const diseaseSelect = document.getElementById("disease");
-    const inputFields = document.getElementById("input-fields");
+    const parameterForm = document.getElementById("parameter-form");
     const predictButton = document.getElementById("predict-btn");
     const resultDiv = document.getElementById("result");
 
@@ -8,13 +8,13 @@ document.addEventListener("DOMContentLoaded", function () {
     const diseaseParameters = {
         "diabetes": ["Glucose Level", "Blood Pressure", "BMI", "Age"],
         "heart_disease": ["Cholesterol Level", "Blood Pressure", "Heart Rate", "Age"],
-        "lung_cancer": ["Smoking History", "Cough Intensity", "Shortness of Breath", "Age"],
+        "lung_disease": ["Smoking History", "Cough Intensity", "Shortness of Breath", "Age"],
         "parkinsons": ["Tremor Severity", "Voice Changes", "Muscle Stiffness", "Age"]
     };
 
     // Update input fields when disease is selected
     diseaseSelect.addEventListener("change", function () {
-        inputFields.innerHTML = "";
+        parameterForm.innerHTML = "";
         const selectedDisease = diseaseSelect.value;
         if (selectedDisease) {
             diseaseParameters[selectedDisease].forEach(param => {
@@ -22,8 +22,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 input.type = "number";
                 input.placeholder = param;
                 input.dataset.param = param;
-                inputFields.appendChild(input);
+                parameterForm.appendChild(input);
             });
+            predictButton.style.display = "block";
+        } else {
+            predictButton.style.display = "none";
         }
     });
 
@@ -36,27 +39,24 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         // Collect input values
-        const inputs = Array.from(inputFields.querySelectorAll("input")).map(input => ({
-            name: input.dataset.param,
-            value: parseFloat(input.value)
-        }));
+        const inputs = Array.from(parameterForm.querySelectorAll("input")).map(input => parseFloat(input.value));
 
         // Validate inputs
-        if (inputs.some(input => isNaN(input.value))) {
+        if (inputs.some(value => isNaN(value))) {
             alert("Please enter valid values for all parameters.");
             return;
         }
 
-        // Send data to backend (Replace this with actual API call)
-        fetch("http://localhost:5000/predict", {
+        // Send data to Flask backend
+        fetch("/predict", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ disease: selectedDisease, parameters: inputs })
+            body: JSON.stringify({ disease: selectedDisease, features: inputs })
         })
         .then(response => response.json())
         .then(data => {
             resultDiv.innerHTML = `Prediction: ${data.prediction}`;
-            resultDiv.style.color = data.prediction === "High Risk" ? "red" : "green";
+            resultDiv.style.color = data.prediction === "Positive" ? "red" : "green";
         })
         .catch(error => console.error("Error:", error));
     });
