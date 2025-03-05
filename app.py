@@ -2,26 +2,28 @@ import streamlit as st
 import joblib
 import numpy as np
 
-# Load models safely
-models = {}
-
+# Function to safely load a model
 def load_model(name, path):
     try:
         return joblib.load(path)
     except Exception as e:
         st.error(f"⚠️ Could not load {name} model: {e}")
-        return None
+        return None  # Return None if loading fails
 
-models["Diabetes"] = load_model("Diabetes", "models/diabetes_model.pkl")
-models["Heart Disease"] = load_model("Heart Disease", "models/heart_disease_model.pkl")
-models["Parkinson's"] = load_model("Parkinson's", "models/parkinsons_model.pkl")
+# Load models separately
+models = {
+    "Diabetes": load_model("Diabetes", "models/diabetes_model.pkl"),
+    "Heart Disease": load_model("Heart Disease", "models/heart_disease_model.pkl"),
+    "Parkinson's": load_model("Parkinson's", "models/parkinsons_model.pkl"),
+}
 
-# Remove None values (failed models) so they don't break the app
-models = {k: v for k, v in models.items() if v is not None}
+# Remove any models that failed to load (None values)
+models = {key: value for key, value in models.items() if value is not None}
 
+# Check if at least one model is loaded
 if not models:
-    st.error("⚠️ No models were loaded. Please check the model files.")
-    st.stop()
+    st.error("⚠️ No models could be loaded. Please check the model files.")
+    st.stop()  # Stop the app from running further
 
 # Streamlit UI
 st.title("🩺 AI Disease Prediction System")
