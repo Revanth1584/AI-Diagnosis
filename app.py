@@ -4,14 +4,24 @@ import numpy as np
 
 # Load models safely
 models = {}
-try:
-    models = {
-        "Diabetes": joblib.load("models/diabetes_model.pkl"),
-        "Heart Disease": joblib.load("models/heart_disease_model.pkl"),
-        "Parkinson's": joblib.load("models/parkinsons_model.pkl"),
-    }
-except Exception as e:
-    st.error(f"⚠️ Error loading models: {e}")
+
+def load_model(name, path):
+    try:
+        return joblib.load(path)
+    except Exception as e:
+        st.error(f"⚠️ Could not load {name} model: {e}")
+        return None
+
+models["Diabetes"] = load_model("Diabetes", "models/diabetes_model.pkl")
+models["Heart Disease"] = load_model("Heart Disease", "models/heart_disease_model.pkl")
+models["Parkinson's"] = load_model("Parkinson's", "models/parkinsons_model.pkl")
+
+# Remove None values (failed models) so they don't break the app
+models = {k: v for k, v in models.items() if v is not None}
+
+if not models:
+    st.error("⚠️ No models were loaded. Please check the model files.")
+    st.stop()
 
 # Streamlit UI
 st.title("🩺 AI Disease Prediction System")
