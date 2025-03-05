@@ -1,38 +1,41 @@
-from flask import Flask, render_template, request, jsonify
+import streamlit as st
 import joblib
 import numpy as np
 
-app = Flask(__name__)
-
-# Load pre-trained models
+# Load models
 models = {
-    "diabetes": joblib.load("models/diabetes_model.pkl"),
-    "heart_disease": joblib.load("models/heart_disease_model.pkl"),
-    "parkinsons": joblib.load("models/parkinsons_model.pkl"),
+    "Diabetes": joblib.load("models/diabetes_model.pkl"),
+    "Heart Disease": joblib.load("models/heart_disease.pkl"),
+    "Parkinson's": joblib.load("models/parkinsons.pkl"),
 }
 
-@app.route("/")
-def home():
-    return render_template("index.html")
+# Streamlit UI
+st.title("AI Disease Prediction")
 
-@app.route("/predict", methods=["POST"])
-def predict():
-    try:
-        data = request.json
-        disease = data.get("disease")
-        features = data.get("features")
+# Select disease
+disease = st.selectbox("Select a Disease", list(models.keys()))
 
-        if disease not in models:
-            return jsonify({"error": "Invalid disease type"}), 400
+# Input fields based on disease
+disease_params = {
+    "Diabetes": ["Glucose Level", "Blood Pressure", "BMI", "Age"],
+    "Heart Disease": ["Cholesterol Level", "Blood Pressure", "Heart Rate", "Age"],
+    "Parkinson's": ["Tremor Severity", "Voice Changes", "Muscle Stiffness", "Age"],
+}
 
+if disease:
+    st.write(f"Enter the required values for {disease}:")
+    user_inputs = []
+    
+    for param in disease_params[disease]:
+        value = st.number_input(param, min_value=0.0, step=0.1)
+        user_inputs.append(value)
+
+    if st.button("Predict"):
         model = models[disease]
-        prediction = model.predict([np.array(features)])
-
+        prediction = model.predict([np.array(user_inputs)])
         result = "Positive" if prediction[0] == 1 else "Negative"
-        return jsonify({"disease": disease, "prediction": result})
-
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-if __name__ == "__main__":
-    app.run(debug=True)
+        
+        if result == "Positive":
+            st.error(f"The model predicts **{disease} Positive**.")
+        else:
+            st.success(f"The model predicts **{disease} Negative**.")
