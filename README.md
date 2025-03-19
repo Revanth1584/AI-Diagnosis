@@ -1,6 +1,4 @@
-# AI Diagnosis - Healthcare Disease Prediction System 🏥🤖  
-
-![AI-Diagnosis Logo](https://huggingface.co/spaces/revanthkaushik/aiddiagnosis/resolve/main/logo.png)  
+# AI Diagnosis - Healthcare Disease Prediction System 🏥🤖   
 
 ## Overview  
 **AI Diagnosis** is a healthcare web application that predicts multiple diseases based on user inputs. It provides an intuitive, step-by-step interface for entering patient details, analyzing data, and delivering instant health assessments.  
