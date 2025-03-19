@@ -3,6 +3,12 @@
 ## Overview  
 **AI Diagnosis** is a healthcare web application that predicts multiple diseases based on user inputs. It provides an intuitive, step-by-step interface for entering patient details, analyzing data, and delivering instant health assessments.  
 
+Important Disclaimers ⚠️
+❗ Not a medical diagnostic tool
+❗ Always consult qualified healthcare professionals
+❗ Emergency responses should be verified through official channels
+❗ Medication information is for reference only
+
 🔹 **Diseases Covered:**  
 - Diabetes  
 - Heart Disease  
