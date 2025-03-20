@@ -53,16 +53,6 @@ python app.py
 Contributing
 Feel free to fork this project, improve it, and submit pull requests! 🚀
 
-Contact
-For queries or collaboration, reach out via Hugging Face discussions or GitHub issues.
-
-💙 Made with AI for Better Healthcare
-
-vbnet
-Copy
-Edit
-
-This README provides a professional and engaging presentation of your project. Let me know if you need changes! 🚀
 
 
 
